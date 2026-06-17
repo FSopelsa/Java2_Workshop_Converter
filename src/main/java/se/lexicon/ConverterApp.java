@@ -11,7 +11,7 @@ public class ConverterApp {
 
     static final double SPEED_CONVERSION_FACTOR = 3.6;
 
-    static final double FUEL_CONVERSION_BASE = 100.0;
+    // static final double FUEL_CONVERSION_BASE = 100.0;
 
     static final Scanner scanner = new Scanner(System.in);
 
@@ -25,7 +25,7 @@ public class ConverterApp {
 
             switch (choice) {
                 case 1 -> temperatureConverter();
-               // case 2 -> speedConverter();
+                case 2 -> speedConverter();
                // case 3 -> fuelConsumptionConverter();
                 case 4 -> {
                     System.out.println("Goodbye!");
@@ -76,6 +76,28 @@ public class ConverterApp {
         }
     }
 
+    static void speedConverter() {
+        System.out.println("\n--- Speed Converter ---");
+        System.out.println("Convert:");
+        System.out.println("  1. km/h to m/s");
+        System.out.println("  2. m/s to km/h");
+
+        int choice = readInt("Your choice: ");
+
+        switch (choice) {
+            case 1 -> {
+                double kmPerHour = readDouble("Enter speed in km/h: ");
+                double metersPerSecond = kmhToMs(kmPerHour);
+                System.out.printf("Result: %.2f km/h = %.2f m/s%n%n", kmPerHour, metersPerSecond);
+            }
+            case 2 -> {
+                double metersPerSecond = readDouble("Enter speed in m/s: ");
+                double kmPerHour = msToKmh(metersPerSecond);
+                System.out.printf("Result: %.2f m/s = %.2f km/h%n%n", metersPerSecond, kmPerHour);
+            }
+            default -> System.out.println("Invalid choice.\n");
+        }
+    }
 
     // Conversion methods
     static double celsiusToFahrenheit(double celsius) {
@@ -84,6 +106,14 @@ public class ConverterApp {
 
     static double fahrenheitToCelsius(double fahrenheit) {
         return (fahrenheit - FAHRENHEIT_OFFSET) * FAHRENHEIT_TO_CELSIUS_MULTIPLIER;
+    }
+
+    static double kmhToMs(double kmPerHour) {
+        return kmPerHour / SPEED_CONVERSION_FACTOR;
+    }
+
+    static double msToKmh(double metersPerSecond) {
+        return metersPerSecond * SPEED_CONVERSION_FACTOR;
     }
 
     // Input helper methods
