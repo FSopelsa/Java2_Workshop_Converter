@@ -11,7 +11,7 @@ public class ConverterApp {
 
     static final double SPEED_CONVERSION_FACTOR = 3.6;
 
-    // static final double FUEL_CONVERSION_BASE = 100.0;
+    static final double FUEL_CONVERSION_BASE = 100.0;
 
     static final Scanner scanner = new Scanner(System.in);
 
@@ -26,7 +26,7 @@ public class ConverterApp {
             switch (choice) {
                 case 1 -> temperatureConverter();
                 case 2 -> speedConverter();
-               // case 3 -> fuelConsumptionConverter();
+                case 3 -> fuelConsumptionConverter();
                 case 4 -> {
                     System.out.println("Goodbye!");
                     running = false;
@@ -99,6 +99,29 @@ public class ConverterApp {
         }
     }
 
+    static void fuelConsumptionConverter() {
+        System.out.println("\n--- Fuel Consumption Converter ---");
+        System.out.println("Convert:");
+        System.out.println("  1. Litres per 100 km to km per litre");
+        System.out.println("  2. km per litre to litres per 100 km");
+
+        int choice = readInt("Your choice: ");
+
+        switch (choice) {
+            case 1 -> {
+                double litresPer100Km = readDouble("Enter litres per 100 km: ");
+                double kmPerLitre = litresPer100KmToKmPerLitre(litresPer100Km);
+                System.out.printf("Result: %.2f L/100km = %.2f km/L%n%n", litresPer100Km, kmPerLitre);
+            }
+            case 2 -> {
+                double kmPerLitre = readDouble("Enter km per litre: ");
+                double litresPer100Km = kmPerLitreToLitresPer100Km(kmPerLitre);
+                System.out.printf("Result: %.2f km/L = %.2f L/100km%n%n", kmPerLitre, litresPer100Km);
+            }
+            default -> System.out.println("Invalid choice.\n");
+        }
+    }
+
     // Conversion methods
     static double celsiusToFahrenheit(double celsius) {
         return celsius * CELSIUS_TO_FAHRENHEIT_MULTIPLIER + FAHRENHEIT_OFFSET;
@@ -114,6 +137,14 @@ public class ConverterApp {
 
     static double msToKmh(double metersPerSecond) {
         return metersPerSecond * SPEED_CONVERSION_FACTOR;
+    }
+
+    static double litresPer100KmToKmPerLitre(double litresPer100Km) {
+        return FUEL_CONVERSION_BASE / litresPer100Km;
+    }
+
+    static double kmPerLitreToLitresPer100Km(double kmPerLitre) {
+        return FUEL_CONVERSION_BASE / kmPerLitre;
     }
 
     // Input helper methods
