@@ -1,5 +1,9 @@
 package se.lexicon;
 
+// import java.time.LocalDateTime;
+// import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConverterApp {
@@ -16,6 +20,8 @@ public class ConverterApp {
     static final double FUEL_CONVERSION_BASE = 100.0;
 
     static final Scanner scanner = new Scanner(System.in);
+    static final List<String> conversionHistory = new ArrayList<>();
+   // static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static void main(String[] args) {
         boolean running = true;
@@ -29,10 +35,7 @@ public class ConverterApp {
                 case 1 -> temperatureConverter();
                 case 2 -> speedConverter();
                 case 3 -> fuelConsumptionConverter();
-                case 4 -> {
-                    System.out.println("Goodbye!");
-                    running = false;
-                }
+                case 4 -> running = false;
             }
 
             if (running && choice >= 1 && choice <= 3) {
@@ -40,6 +43,8 @@ public class ConverterApp {
             }
         }
 
+        printConversionHistory();
+        System.out.println("Goodbye!");
         scanner.close();
     }
 
@@ -70,7 +75,9 @@ public class ConverterApp {
                         "Invalid value. Temperature cannot be below absolute zero (-273.15 C)."
                 );
                 double fahrenheit = celsiusToFahrenheit(celsius);
-                System.out.printf("Result: %.2f C = %.2f F%n%n", celsius, fahrenheit);
+                String result = String.format("Result: %.2f C = %.2f F", celsius, fahrenheit);
+//                printResultWithTimestamp(result);
+                addConversionHistory(String.format("%.2f C = %.2f F", celsius, fahrenheit));
             }
             case 2 -> {
                 double fahrenheit = readDoubleWithMinimum(
@@ -79,7 +86,9 @@ public class ConverterApp {
                         "Invalid value. Temperature cannot be below absolute zero (-459.67 F)."
                 );
                 double celsius = fahrenheitToCelsius(fahrenheit);
-                System.out.printf("Result: %.2f F = %.2f C%n%n", fahrenheit, celsius);
+                String result = String.format("Result: %.2f F = %.2f C", fahrenheit, celsius);
+//                printResultWithTimestamp(result);
+                addConversionHistory(String.format("%.2f F = %.2f C", fahrenheit, celsius));
             }
         }
     }
@@ -96,12 +105,16 @@ public class ConverterApp {
             case 1 -> {
                 double kmPerHour = readNonNegativeDouble("Enter speed in km/h: ");
                 double metersPerSecond = kmhToMs(kmPerHour);
-                System.out.printf("Result: %.2f km/h = %.2f m/s%n%n", kmPerHour, metersPerSecond);
+                String result = String.format("Result: %.2f km/h = %.2f m/s", kmPerHour, metersPerSecond);
+//                printResultWithTimestamp(result);
+                addConversionHistory(String.format("%.2f km/h = %.2f m/s", kmPerHour, metersPerSecond));
             }
             case 2 -> {
                 double metersPerSecond = readNonNegativeDouble("Enter speed in m/s: ");
                 double kmPerHour = msToKmh(metersPerSecond);
-                System.out.printf("Result: %.2f m/s = %.2f km/h%n%n", metersPerSecond, kmPerHour);
+                String result = String.format("Result: %.2f m/s = %.2f km/h", metersPerSecond, kmPerHour);
+//                printResultWithTimestamp(result);
+                addConversionHistory(String.format("%.2f m/s = %.2f km/h", metersPerSecond, kmPerHour));
             }
         }
     }
@@ -118,12 +131,16 @@ public class ConverterApp {
             case 1 -> {
                 double litresPer100Km = readPositiveDouble("Enter litres per 100 km: ");
                 double kmPerLitre = litresPer100KmToKmPerLitre(litresPer100Km);
-                System.out.printf("Result: %.2f L/100km = %.2f km/L%n%n", litresPer100Km, kmPerLitre);
+                String result = String.format("Result: %.2f L/100km = %.2f km/L", litresPer100Km, kmPerLitre);
+//                printResultWithTimestamp(result);
+                addConversionHistory(String.format("%.2f L/100km = %.2f km/L", litresPer100Km, kmPerLitre));
             }
             case 2 -> {
                 double kmPerLitre = readPositiveDouble("Enter km per litre: ");
                 double litresPer100Km = kmPerLitreToLitresPer100Km(kmPerLitre);
-                System.out.printf("Result: %.2f km/L = %.2f L/100km%n%n", kmPerLitre, litresPer100Km);
+                String result = String.format("Result: %.2f km/L = %.2f L/100km", kmPerLitre, litresPer100Km);
+//                printResultWithTimestamp(result);
+                addConversionHistory(String.format("%.2f km/L = %.2f L/100km", kmPerLitre, litresPer100Km));
             }
         }
     }
@@ -236,11 +253,36 @@ public class ConverterApp {
             }
 
             if (answer.equalsIgnoreCase("no")) {
-                System.out.println("Goodbye!");
                 return false;
             }
 
             System.out.println("Invalid input. Please enter yes or no.");
         }
+    }
+
+
+
+    static void addConversionHistory(String conversion) {
+        conversionHistory.add(conversion);
+    }
+
+    static void printConversionHistory() {
+        if (conversionHistory.isEmpty()) {
+            return;
+        }
+
+        System.out.println();
+        System.out.println("=== Conversion History ===");
+
+        for (int i = 0; i < conversionHistory.size(); i++) {
+            System.out.printf("%d. %s%n", i + 1, conversionHistory.get(i));
+        }
+
+        System.out.println("==========================");
+        System.out.printf("Total conversions: %d%n", conversionHistory.size());
+    }
+
+    static void printGoodbyeMessage() {
+        System.out.println("Goodbye!");
     }
 }
