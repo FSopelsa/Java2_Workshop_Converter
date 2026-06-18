@@ -8,6 +8,8 @@ public class ConverterApp {
     static final double CELSIUS_TO_FAHRENHEIT_MULTIPLIER = 9.0 / 5.0;
     static final double FAHRENHEIT_TO_CELSIUS_MULTIPLIER = 5.0 / 9.0;
     static final double FAHRENHEIT_OFFSET = 32.0;
+    static final double ABSOLUTE_ZERO_CELSIUS = -273.15;
+    static final double ABSOLUTE_ZERO_FAHRENHEIT = -459.67;
 
     static final double SPEED_CONVERSION_FACTOR = 3.6;
 
@@ -21,7 +23,7 @@ public class ConverterApp {
         while (running) {
             printMainMenu();
 
-            int choice = readInt("Choose an option: ");
+            int choice = readIntInRange("Choose an option: ", 1, 4);
 
             switch (choice) {
                 case 1 -> temperatureConverter();
@@ -31,7 +33,6 @@ public class ConverterApp {
                     System.out.println("Goodbye!");
                     running = false;
                 }
-                default -> System.out.println("Invalid choice. Please choose 1-4.");
             }
 
             if (running && choice >= 1 && choice <= 3) {
@@ -59,20 +60,27 @@ public class ConverterApp {
         System.out.println("  1. Celsius to Fahrenheit");
         System.out.println("  2. Fahrenheit to Celsius");
 
-        int choice = readInt("Your choice: ");
+        int choice = readIntInRange("Your choice: ", 1, 2);
 
         switch (choice) {
             case 1 -> {
-                double celsius = readDouble("Enter temperature in Celsius: ");
+                double celsius = readDoubleWithMinimum(
+                        "Enter temperature in Celsius: ",
+                        ABSOLUTE_ZERO_CELSIUS,
+                        "Invalid value. Temperature cannot be below absolute zero (-273.15 C)."
+                );
                 double fahrenheit = celsiusToFahrenheit(celsius);
                 System.out.printf("Result: %.2f C = %.2f F%n%n", celsius, fahrenheit);
             }
             case 2 -> {
-                double fahrenheit = readDouble("Enter temperature in Fahrenheit: ");
+                double fahrenheit = readDoubleWithMinimum(
+                        "Enter temperature in Fahrenheit: ",
+                        ABSOLUTE_ZERO_FAHRENHEIT,
+                        "Invalid value. Temperature cannot be below absolute zero (-459.67 F)."
+                );
                 double celsius = fahrenheitToCelsius(fahrenheit);
                 System.out.printf("Result: %.2f F = %.2f C%n%n", fahrenheit, celsius);
             }
-            default -> System.out.println("Invalid choice.\n");
         }
     }
 
@@ -82,20 +90,19 @@ public class ConverterApp {
         System.out.println("  1. km/h to m/s");
         System.out.println("  2. m/s to km/h");
 
-        int choice = readInt("Your choice: ");
+        int choice = readIntInRange("Your choice: ", 1, 2);
 
         switch (choice) {
             case 1 -> {
-                double kmPerHour = readDouble("Enter speed in km/h: ");
+                double kmPerHour = readNonNegativeDouble("Enter speed in km/h: ");
                 double metersPerSecond = kmhToMs(kmPerHour);
                 System.out.printf("Result: %.2f km/h = %.2f m/s%n%n", kmPerHour, metersPerSecond);
             }
             case 2 -> {
-                double metersPerSecond = readDouble("Enter speed in m/s: ");
+                double metersPerSecond = readNonNegativeDouble("Enter speed in m/s: ");
                 double kmPerHour = msToKmh(metersPerSecond);
                 System.out.printf("Result: %.2f m/s = %.2f km/h%n%n", metersPerSecond, kmPerHour);
             }
-            default -> System.out.println("Invalid choice.\n");
         }
     }
 
@@ -105,20 +112,19 @@ public class ConverterApp {
         System.out.println("  1. Litres per 100 km to km per litre");
         System.out.println("  2. km per litre to litres per 100 km");
 
-        int choice = readInt("Your choice: ");
+        int choice = readIntInRange("Your choice: ", 1, 2);
 
         switch (choice) {
             case 1 -> {
-                double litresPer100Km = readDouble("Enter litres per 100 km: ");
+                double litresPer100Km = readPositiveDouble("Enter litres per 100 km: ");
                 double kmPerLitre = litresPer100KmToKmPerLitre(litresPer100Km);
                 System.out.printf("Result: %.2f L/100km = %.2f km/L%n%n", litresPer100Km, kmPerLitre);
             }
             case 2 -> {
-                double kmPerLitre = readDouble("Enter km per litre: ");
+                double kmPerLitre = readPositiveDouble("Enter km per litre: ");
                 double litresPer100Km = kmPerLitreToLitresPer100Km(kmPerLitre);
                 System.out.printf("Result: %.2f km/L = %.2f L/100km%n%n", kmPerLitre, litresPer100Km);
             }
-            default -> System.out.println("Invalid choice.\n");
         }
     }
 
@@ -148,29 +154,93 @@ public class ConverterApp {
     }
 
     // Input helper methods
-    static int readInt(String message) {
-        System.out.print(message);
-        int value = scanner.nextInt();
-        scanner.nextLine();
-        return value;
+    static int readIntInRange(String message, int min, int max) {
+        while (true) {
+            System.out.print(message);
+            String input = scanner.nextLine();
+
+            try {
+                int value = Integer.parseInt(input);
+
+                if (value < min || value > max) {
+                    System.out.printf("Invalid choice. Please enter a number between %d and %d.%n", min, max);
+                    continue;
+                }
+
+                return value;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
     }
 
     static double readDouble(String message) {
-        System.out.print(message);
-        double value = scanner.nextDouble();
-        scanner.nextLine();
-        return value;
+        while (true) {
+            System.out.print(message);
+            String input = scanner.nextLine();
+
+            try {
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+    }
+
+    static double readDoubleWithMinimum(String message, double minimum, String errorMessage) {
+        while (true) {
+            double value = readDouble(message);
+
+            if (value < minimum) {
+                System.out.println(errorMessage);
+                continue;
+            }
+
+            return value;
+        }
+    }
+
+    static double readNonNegativeDouble(String message) {
+        while (true) {
+            double value = readDouble(message);
+
+            if (value < 0) {
+                System.out.println("Invalid value. Please enter a value that is zero or greater.");
+                continue;
+            }
+
+            return value;
+        }
+    }
+
+    static double readPositiveDouble(String message) {
+        while (true) {
+            double value = readDouble(message);
+
+            if (value <= 0) {
+                System.out.println("Invalid value. Please enter a value greater than zero.");
+                continue;
+            }
+
+            return value;
+        }
     }
 
     static boolean askToContinue() {
-        System.out.print("Continue? (yes/no): ");
-        String answer = scanner.nextLine();
+        while (true) {
+            System.out.print("Continue? (yes/no): ");
+            String answer = scanner.nextLine();
 
-        if (answer.equalsIgnoreCase("yes")) {
-            return true;
-        } else {
-            System.out.println("Goodbye!");
-            return false;
+            if (answer.equalsIgnoreCase("yes")) {
+                return true;
+            }
+
+            if (answer.equalsIgnoreCase("no")) {
+                System.out.println("Goodbye!");
+                return false;
+            }
+
+            System.out.println("Invalid input. Please enter yes or no.");
         }
     }
 }
