@@ -1,7 +1,7 @@
 package se.lexicon;
 
-// import java.time.LocalDateTime;
-// import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -21,7 +21,7 @@ public class ConverterApp {
 
     static final Scanner scanner = new Scanner(System.in);
     static final List<String> conversionHistory = new ArrayList<>();
-   // static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static void main(String[] args) {
         boolean running = true;
@@ -76,7 +76,7 @@ public class ConverterApp {
                 );
                 double fahrenheit = celsiusToFahrenheit(celsius);
                 String result = String.format("Result: %.2f C = %.2f F", celsius, fahrenheit);
-//                printResultWithTimestamp(result);
+                printResultWithTimestamp(result);
                 addConversionHistory(String.format("%.2f C = %.2f F", celsius, fahrenheit));
             }
             case 2 -> {
@@ -87,7 +87,7 @@ public class ConverterApp {
                 );
                 double celsius = fahrenheitToCelsius(fahrenheit);
                 String result = String.format("Result: %.2f F = %.2f C", fahrenheit, celsius);
-//                printResultWithTimestamp(result);
+                printResultWithTimestamp(result);
                 addConversionHistory(String.format("%.2f F = %.2f C", fahrenheit, celsius));
             }
         }
@@ -106,14 +106,14 @@ public class ConverterApp {
                 double kmPerHour = readNonNegativeDouble("Enter speed in km/h: ");
                 double metersPerSecond = kmhToMs(kmPerHour);
                 String result = String.format("Result: %.2f km/h = %.2f m/s", kmPerHour, metersPerSecond);
-//                printResultWithTimestamp(result);
+                printResultWithTimestamp(result);
                 addConversionHistory(String.format("%.2f km/h = %.2f m/s", kmPerHour, metersPerSecond));
             }
             case 2 -> {
                 double metersPerSecond = readNonNegativeDouble("Enter speed in m/s: ");
                 double kmPerHour = msToKmh(metersPerSecond);
                 String result = String.format("Result: %.2f m/s = %.2f km/h", metersPerSecond, kmPerHour);
-//                printResultWithTimestamp(result);
+                printResultWithTimestamp(result);
                 addConversionHistory(String.format("%.2f m/s = %.2f km/h", metersPerSecond, kmPerHour));
             }
         }
@@ -132,14 +132,14 @@ public class ConverterApp {
                 double litresPer100Km = readPositiveDouble("Enter litres per 100 km: ");
                 double kmPerLitre = litresPer100KmToKmPerLitre(litresPer100Km);
                 String result = String.format("Result: %.2f L/100km = %.2f km/L", litresPer100Km, kmPerLitre);
-//                printResultWithTimestamp(result);
+                printResultWithTimestamp(result);
                 addConversionHistory(String.format("%.2f L/100km = %.2f km/L", litresPer100Km, kmPerLitre));
             }
             case 2 -> {
                 double kmPerLitre = readPositiveDouble("Enter km per litre: ");
                 double litresPer100Km = kmPerLitreToLitresPer100Km(kmPerLitre);
                 String result = String.format("Result: %.2f km/L = %.2f L/100km", kmPerLitre, litresPer100Km);
-//                printResultWithTimestamp(result);
+                printResultWithTimestamp(result);
                 addConversionHistory(String.format("%.2f km/L = %.2f L/100km", kmPerLitre, litresPer100Km));
             }
         }
@@ -260,7 +260,14 @@ public class ConverterApp {
         }
     }
 
+    static void printResultWithTimestamp(String result) {
+        System.out.println(result);
+        System.out.printf("Converted at: %s%n%n", getCurrentTimestamp());
+    }
 
+    static String getCurrentTimestamp() {
+        return LocalDateTime.now().format(TIMESTAMP_FORMATTER);
+    }
 
     static void addConversionHistory(String conversion) {
         conversionHistory.add(conversion);
@@ -280,9 +287,5 @@ public class ConverterApp {
 
         System.out.println("==========================");
         System.out.printf("Total conversions: %d%n", conversionHistory.size());
-    }
-
-    static void printGoodbyeMessage() {
-        System.out.println("Goodbye!");
     }
 }
